@@ -67,6 +67,7 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({
                     onChange={(e) => setNewProjectName(e.target.value)}
                     placeholder="New Project Name"
                     className="input-new-project"
+                    data-testid="new-project-input"
                     onKeyDown={(e) => e.key === 'Enter' && handleAdd()}
                 />
                 <button onClick={handleAdd} className="btn-add">Add Project</button>
