@@ -33,6 +33,12 @@ npm install
 npm run dev
 ```
 
+## Run tests:
+
+```bash
+npm test
+```
+
 ## Build
 
 ```bash
