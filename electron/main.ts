@@ -53,6 +53,12 @@ ipcMain.handle('db:delete-project', (_, id: string) => {
   const projects = store.get('projects')
   store.set('projects', projects.filter(p => p.id !== id))
 })
+ipcMain.handle('db:update-project', (_, updatedProject: Project) => {
+  console.log('IPC: db:update-project', updatedProject)
+  const projects = store.get('projects')
+  store.set('projects', projects.map(p => p.id === updatedProject.id ? updatedProject : p))
+  return updatedProject
+})
 
 ipcMain.handle('db:get-jobs', () => {
   console.log('IPC: db:get-jobs')

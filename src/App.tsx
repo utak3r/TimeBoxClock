@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { Project, Job } from './types'
 import { Sidebar } from './components/Sidebar'
 import { StatsView } from './components/StatsView'
+import { ProjectsView } from './components/ProjectsView'
 import './App.css'
 
 function App() {
@@ -14,7 +15,7 @@ function App() {
   const [note, setNote] = useState('')
 
   // Navigation State
-  const [currentView, setCurrentView] = useState<'main' | 'stats'>('main')
+  const [currentView, setCurrentView] = useState<'main' | 'stats' | 'projects'>('main')
 
   // UI State for adding project
   const [isAddingProject, setIsAddingProject] = useState(false)
@@ -120,8 +121,9 @@ function App() {
     }
   }
 
-  const handleAddProject = async () => {
-    if (!newProjectName.trim()) {
+  const handleAddProject = async (name?: string) => {
+    const nameToAdd = name || newProjectName
+    if (!nameToAdd.trim()) {
       setIsAddingProject(false)
       return
     }
@@ -129,7 +131,7 @@ function App() {
     try {
       const newProject: Project = {
         id: uuidv4(),
-        name: newProjectName,
+        name: nameToAdd,
         color: '#' + Math.floor(Math.random() * 16777215).toString(16) // Random color
       }
       await window.db.addProject(newProject)
@@ -139,6 +141,70 @@ function App() {
     } catch (error: any) {
       console.error('Failed to add project:', error)
       alert(`Failed to add project: ${error.message || error}`)
+    }
+  }
+
+  const handleUpdateProject = async (project: Project) => {
+    try {
+      await window.db.updateProject(project)
+      setProjects(prev => prev.map(p => p.id === project.id ? project : p))
+    } catch (error: any) {
+      console.error('Failed to update project:', error)
+      alert(`Failed to update project: ${error.message || error}`)
+    }
+  }
+
+  const handleDeleteProject = async (id: string, deleteJobs: boolean) => {
+    try {
+      await window.db.deleteProject(id)
+      setProjects(prev => prev.filter(p => p.id !== id))
+
+      if (deleteJobs) {
+        // Delete all jobs associated with this project
+        const jobsToDelete = jobs.filter(j => j.projectId === id)
+        for (const job of jobsToDelete) {
+          await window.db.deleteJob(job.id)
+        }
+        setJobs(prev => prev.filter(j => j.projectId !== id))
+      } else {
+        // Update jobs to have no project
+        const jobsToUpdate = jobs.filter(j => j.projectId === id)
+        for (const job of jobsToUpdate) {
+          const updatedJob = { ...job, projectId: null }
+          await window.db.updateJob(updatedJob)
+        }
+        setJobs(prev => prev.map(j => j.projectId === id ? { ...j, projectId: null } : j))
+      }
+    } catch (error: any) {
+      console.error('Failed to delete project:', error)
+      alert(`Failed to delete project: ${error.message || error}`)
+    }
+  }
+
+  const handleClearUnassignedJobs = async () => {
+    try {
+      const unassignedJobs = jobs.filter(j => !j.projectId)
+      for (const job of unassignedJobs) {
+        await window.db.deleteJob(job.id)
+      }
+      setJobs(prev => prev.filter(j => !!j.projectId))
+    } catch (error: any) {
+      console.error('Failed to clear unassigned jobs:', error)
+      alert(`Failed to clear unassigned jobs: ${error.message || error}`)
+    }
+  }
+
+  const handleMoveUnassignedJobs = async (targetProjectId: string) => {
+    try {
+      const unassignedJobs = jobs.filter(j => !j.projectId)
+      for (const job of unassignedJobs) {
+        const updatedJob = { ...job, projectId: targetProjectId }
+        await window.db.updateJob(updatedJob)
+      }
+      setJobs(prev => prev.map(j => !j.projectId ? { ...j, projectId: targetProjectId } : j))
+    } catch (error: any) {
+      console.error('Failed to move unassigned jobs:', error)
+      alert(`Failed to move unassigned jobs: ${error.message || error}`)
     }
   }
 
@@ -191,7 +257,7 @@ function App() {
                   if (e.key === 'Escape') setIsAddingProject(false)
                 }}
               />
-              <button className="btn-icon btn-confirm" onClick={handleAddProject}>✓</button>
+              <button className="btn-icon btn-confirm" onClick={() => handleAddProject()}>✓</button>
               <button className="btn-icon btn-cancel" onClick={() => setIsAddingProject(false)}>✕</button>
             </div>
           ) : (
@@ -239,8 +305,17 @@ function App() {
 
       <div className="main-content">
         <main className="content-area">
-          {currentView === 'main' ? renderMainView() : (
-            <StatsView projects={projects} jobs={jobs} />
+          {currentView === 'main' && renderMainView()}
+          {currentView === 'stats' && <StatsView projects={projects} jobs={jobs} />}
+          {currentView === 'projects' && (
+            <ProjectsView
+              projects={projects}
+              onAddProject={handleAddProject}
+              onUpdateProject={handleUpdateProject}
+              onDeleteProject={handleDeleteProject}
+              onClearUnassignedJobs={handleClearUnassignedJobs}
+              onMoveUnassignedJobs={handleMoveUnassignedJobs}
+            />
           )}
         </main>
       </div>

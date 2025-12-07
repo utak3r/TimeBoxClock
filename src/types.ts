@@ -17,6 +17,7 @@ export interface Job {
 export interface DB {
     getProjects: () => Promise<Project[]>;
     addProject: (project: Project) => Promise<Project>;
+    updateProject: (project: Project) => Promise<Project>;
     deleteProject: (id: string) => Promise<void>;
     getJobs: () => Promise<Job[]>;
     addJob: (job: Job) => Promise<Job>;

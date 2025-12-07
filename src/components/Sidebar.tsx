@@ -1,8 +1,8 @@
 import React from 'react';
 
 interface SidebarProps {
-    currentView: 'main' | 'stats';
-    onViewChange: (view: 'main' | 'stats') => void;
+    currentView: 'main' | 'projects' | 'stats';
+    onViewChange: (view: 'main' | 'projects' | 'stats') => void;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({ currentView, onViewChange }) => {
@@ -17,6 +17,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, onViewChange }) =
                     onClick={() => onViewChange('main')}
                 >
                     Main
+                </button>
+                <button
+                    className={`nav-item ${currentView === 'projects' ? 'active' : ''}`}
+                    onClick={() => onViewChange('projects')}
+                >
+                    Projects
                 </button>
                 <button
                     className={`nav-item ${currentView === 'stats' ? 'active' : ''}`}

@@ -30,6 +30,7 @@ try {
   contextBridge.exposeInMainWorld('db', {
     getProjects: () => ipcRenderer.invoke('db:get-projects'),
     addProject: (project: any) => ipcRenderer.invoke('db:add-project', project),
+    updateProject: (project: any) => ipcRenderer.invoke('db:update-project', project),
     deleteProject: (id: string) => ipcRenderer.invoke('db:delete-project', id),
     getJobs: () => ipcRenderer.invoke('db:get-jobs'),
     addJob: (job: any) => ipcRenderer.invoke('db:add-job', job),
