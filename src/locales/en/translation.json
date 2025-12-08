@@ -1,0 +1,48 @@
+{
+    "appTitle": "TimeBoxClock",
+    "common": {
+        "start": "Start",
+        "stop": "Stop",
+        "cancel": "Cancel",
+        "confirm": "Confirm",
+        "yes": "Yes",
+        "no": "No",
+        "delete": "Delete",
+        "edit": "Rename",
+        "save": "Save"
+    },
+    "main": {
+        "placeholder": "What are you working on?",
+        "noProject": "No Project",
+        "recentJobs": "Recent Jobs",
+        "noDescription": "No description"
+    },
+    "sidebar": {
+        "timer": "Timer",
+        "stats": "Stats",
+        "projects": "Projects",
+        "settings": "Settings"
+    },
+    "projects": {
+        "title": "Projects",
+        "addProject": "Add Project",
+        "newProjectPlaceholder": "Project Name",
+        "deleteConfirmation": "Delete project and its jobs?",
+        "deleteJobs": "Delete Jobs",
+        "keepJobs": "Keep Jobs (Unassign)",
+        "clearUnassigned": "Clear Unassigned Jobs",
+        "moveUnassigned": "Move Unassigned Jobs",
+        "unassignedJobs": "Unassigned Jobs",
+        "noProjectsAlert": "No projects available to move jobs to.",
+        "moveInstruction": "Select a project:"
+    },
+    "stats": {
+        "totalTime": "Total Time",
+        "today": "Today",
+        "thisWeek": "This Week"
+    },
+    "tray": {
+        "showApp": "Show App",
+        "quit": "Quit"
+    }
+}

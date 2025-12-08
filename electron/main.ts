@@ -3,6 +3,9 @@ import { fileURLToPath } from 'node:url'
 import path from 'node:path'
 import Store from 'electron-store'
 import { consolidateJobs, Job, Project } from './consolidation'
+import i18next from 'i18next'
+import en from '../src/locales/en/translation.json'
+import pl from '../src/locales/pl/translation.json'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -10,6 +13,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 interface StoreSchema {
   projects: Project[];
   jobs: Job[];
+  language?: string;
 }
 
 const store = new Store<StoreSchema>({
@@ -19,10 +23,39 @@ const store = new Store<StoreSchema>({
   }
 })
 
-// ... ipc handlers ...
+// I18n Setup
+// I18n Init function to be called later
+const initI18n = () => {
+  let lng = store.get('language')
+  console.log('Store language:', lng)
+
+  if (!lng) {
+    const sysLocale = app.getLocale() || 'en'
+    lng = sysLocale.split('-')[0]
+    console.log(`Detected system locale: ${sysLocale}, using: ${lng}`)
+    store.set('language', lng)
+  }
+
+  i18next.init({
+    lng: lng,
+    fallbackLng: 'en',
+    resources: {
+      en: { translation: en },
+      pl: { translation: pl }
+    }
+  })
+}
 
 // Log handler
 ipcMain.on('log', (_, msg) => console.log('Renderer/Preload:', msg))
+
+// Language handler
+ipcMain.on('language-changed', (_, lang: string) => {
+  console.log('Language changed to:', lang)
+  store.set('language', lang)
+  i18next.changeLanguage(lang)
+  updateTrayMenu()
+})
 
 // IPC Handlers
 ipcMain.handle('db:get-projects', () => {
@@ -133,11 +166,21 @@ function createTray() {
   tray = new Tray(icon)
   tray.setToolTip('TimeBoxClock')
 
+  updateTrayMenu()
+
+  tray.on('click', () => {
+    toggleWindow()
+  })
+}
+
+function updateTrayMenu() {
+  if (!tray) return
+
   const contextMenu = Menu.buildFromTemplate([
-    { label: 'Show App', click: () => showWindow() },
+    { label: i18next.t('tray.showApp'), click: () => showWindow() },
     { type: 'separator' },
     {
-      label: 'Quit', click: () => {
+      label: i18next.t('tray.quit'), click: () => {
         isQuitting = true
         app.quit()
       }
@@ -145,10 +188,6 @@ function createTray() {
   ])
 
   tray.setContextMenu(contextMenu)
-
-  tray.on('click', () => {
-    toggleWindow()
-  })
 }
 
 function toggleWindow() {
@@ -181,8 +220,9 @@ if (!gotTheLock) {
 
   app.whenReady().then(() => {
     consolidateOldJobs()
-    createWindow()
+    initI18n()
     createTray()
+    createWindow()
   })
 }
 

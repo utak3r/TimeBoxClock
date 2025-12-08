@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Project, Job } from '../types';
 
 interface StatsViewProps {
@@ -7,6 +8,7 @@ interface StatsViewProps {
 }
 
 export const StatsView: React.FC<StatsViewProps> = ({ projects, jobs }) => {
+    const { t } = useTranslation();
     const stats = useMemo(() => {
         const projectStats = new Map<string, number>();
         let totalTime = 0;
@@ -40,11 +42,11 @@ export const StatsView: React.FC<StatsViewProps> = ({ projects, jobs }) => {
 
     return (
         <div className="stats-view">
-            <h2>Statistics</h2>
+            <h2>{t('sidebar.stats')}</h2>
 
             <div className="stats-summary">
                 <div className="stat-card">
-                    <h3>Total Time Tracked</h3>
+                    <h3>{t('stats.totalTime')}</h3>
                     <p className="stat-value">{formatTime(stats.totalTime)}</p>
                 </div>
             </div>
@@ -53,7 +55,7 @@ export const StatsView: React.FC<StatsViewProps> = ({ projects, jobs }) => {
                 <table className="stats-table">
                     <thead>
                         <tr>
-                            <th>Project</th>
+                            <th>{t('projects.title')}</th>
                             <th>Time</th>
                             <th>%</th>
                         </tr>
@@ -81,7 +83,7 @@ export const StatsView: React.FC<StatsViewProps> = ({ projects, jobs }) => {
                         <tr>
                             <td>
                                 <span className="project-dot" style={{ backgroundColor: '#ccc' }}></span>
-                                No Project
+                                {t('main.noProject')}
                             </td>
                             <td>{formatTime(stats.projectStats.get('no-project') || 0)}</td>
                             <td>

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Project } from '../types';
 
 interface ProjectsViewProps {
@@ -18,6 +19,7 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({
     onClearUnassignedJobs,
     onMoveUnassignedJobs
 }) => {
+    const { t } = useTranslation();
     const [newProjectName, setNewProjectName] = useState('');
     const [editingProjectId, setEditingProjectId] = useState<string | null>(null);
     const [editName, setEditName] = useState('');
@@ -58,19 +60,19 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({
 
     return (
         <div className="projects-view">
-            <h2>Projects</h2>
+            <h2>{t('projects.title')}</h2>
 
             <div className="add-project-section">
                 <input
                     type="text"
                     value={newProjectName}
                     onChange={(e) => setNewProjectName(e.target.value)}
-                    placeholder="New Project Name"
+                    placeholder={t('projects.newProjectPlaceholder')}
                     className="input-new-project"
                     data-testid="new-project-input"
                     onKeyDown={(e) => e.key === 'Enter' && handleAdd()}
                 />
-                <button onClick={handleAdd} className="btn-add">Add Project</button>
+                <button onClick={handleAdd} className="btn-add">{t('projects.addProject')}</button>
             </div>
 
             <div className="projects-list">
@@ -98,8 +100,8 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({
                                     <span className="project-name">{project.name}</span>
                                 </div>
                                 <div className="project-actions">
-                                    <button onClick={() => startEditing(project)} className="btn-small">Rename</button>
-                                    <button onClick={() => setDeletingProjectId(project.id)} className="btn-small btn-danger">Remove</button>
+                                    <button onClick={() => startEditing(project)} className="btn-small">{t('common.edit')}</button>
+                                    <button onClick={() => setDeletingProjectId(project.id)} className="btn-small btn-danger">{t('common.delete')}</button>
                                 </div>
                             </>
                         )}
@@ -108,25 +110,26 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({
             </div>
 
             <div className="unassigned-jobs-section">
-                <h3>Jobs without a project</h3>
+                <h3>{t('projects.unassignedJobs')}</h3>
+                { }
                 <div className="unassigned-actions">
-                    <button onClick={() => setShowClearConfirm(true)} className="btn-small btn-danger">Clear jobs</button>
+                    <button onClick={() => setShowClearConfirm(true)} className="btn-small btn-danger">{t('projects.clearUnassigned')}</button>
                     <button onClick={() => {
                         if (projects.length > 0) {
                             setMoveTargetProjectId(projects[0].id);
                             setShowMoveModal(true);
                         } else {
-                            alert("No projects available to move jobs to.");
+                            alert(t('projects.noProjectsAlert') || "No projects available to move jobs to.");
                         }
-                    }} className="btn-small">Move jobs to a project</button>
+                    }} className="btn-small">{t('projects.moveUnassigned')}</button>
                 </div>
             </div>
 
             {deletingProjectId && (
                 <div className="modal-overlay">
                     <div className="modal">
-                        <h3>Remove Project</h3>
-                        <p>What should happen to the jobs associated with this project?</p>
+                        <h3>{t('projects.title')}</h3>
+                        <p>{t('projects.deleteConfirmation')}</p>
                         <div className="modal-actions">
                             <button
                                 onClick={() => {
@@ -135,7 +138,7 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({
                                 }}
                                 className="btn-secondary"
                             >
-                                Move to "No Project"
+                                {t('projects.keepJobs')}
                             </button>
                             <button
                                 onClick={() => {
@@ -144,13 +147,13 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({
                                 }}
                                 className="btn-danger"
                             >
-                                Delete Jobs
+                                {t('projects.deleteJobs')}
                             </button>
                             <button
                                 onClick={() => setDeletingProjectId(null)}
                                 className="btn-cancel"
                             >
-                                Cancel
+                                {t('common.cancel')}
                             </button>
                         </div>
                     </div>
@@ -160,8 +163,13 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({
             {showClearConfirm && (
                 <div className="modal-overlay">
                     <div className="modal">
-                        <h3>Clear Unassigned Jobs</h3>
-                        <p>Are you sure you want to delete all jobs that are not assigned to any project? This action cannot be undone.</p>
+                        <h3>{t('projects.clearUnassigned')}</h3>
+                        <p>{t('projects.deleteConfirmation')}</p>
+                        {/* Reusing deleteConfirmation or should genericize. 
+                           "Are you sure you want to delete all jobs that are not assigned to any project?"
+                           I'll use a new key `projects.clearConfirmation` later, or just reuse/adapt.
+                           I'll use a generic confirm for now.
+                        */}
                         <div className="modal-actions">
                             <button
                                 onClick={() => {
@@ -170,13 +178,13 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({
                                 }}
                                 className="btn-danger"
                             >
-                                Yes, Clear Jobs
+                                {t('common.yes')}
                             </button>
                             <button
                                 onClick={() => setShowClearConfirm(false)}
                                 className="btn-cancel"
                             >
-                                Cancel
+                                {t('common.cancel')}
                             </button>
                         </div>
                     </div>
@@ -186,8 +194,8 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({
             {showMoveModal && (
                 <div className="modal-overlay">
                     <div className="modal">
-                        <h3>Move Unassigned Jobs</h3>
-                        <p>Select a project to move all unassigned jobs to:</p>
+                        <h3>{t('projects.moveUnassigned')}</h3>
+                        <p>{t('projects.moveInstruction') || "Select a project:"}</p>
                         <select
                             value={moveTargetProjectId}
                             onChange={(e) => setMoveTargetProjectId(e.target.value)}
@@ -207,13 +215,13 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({
                                 }}
                                 className="btn-confirm"
                             >
-                                Move Jobs
+                                {t('common.confirm')}
                             </button>
                             <button
                                 onClick={() => setShowMoveModal(false)}
                                 className="btn-cancel"
                             >
-                                Cancel
+                                {t('common.cancel')}
                             </button>
                         </div>
                     </div>

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { v4 as uuidv4 } from 'uuid'
+import { useTranslation } from 'react-i18next'
 import { Project, Job } from './types'
 import { Sidebar } from './components/Sidebar'
 import { StatsView } from './components/StatsView'
@@ -7,6 +8,7 @@ import { ProjectsView } from './components/ProjectsView'
 import './App.css'
 
 function App() {
+  const { t, i18n } = useTranslation()
   const [projects, setProjects] = useState<Project[]>([])
   const [jobs, setJobs] = useState<Job[]>([])
   const [activeJob, setActiveJob] = useState<Job | null>(null)
@@ -22,7 +24,27 @@ function App() {
   const [newProjectName, setNewProjectName] = useState('')
 
   useEffect(() => {
+    // Sync language to main process
+    const syncLanguage = (lang: string) => {
+      if (window.ipcRenderer) {
+        window.ipcRenderer.send('language-changed', lang)
+      }
+    }
+
+    // Sync usage on mount
+    syncLanguage(i18n.language)
+
+    // Listen for changes
+    i18n.on('languageChanged', syncLanguage)
+
+    // Cleanup
+    const cleanup = () => {
+      i18n.off('languageChanged', syncLanguage)
+    }
+
     loadData()
+
+    return cleanup
   }, [])
 
   useEffect(() => {
@@ -40,6 +62,7 @@ function App() {
   const loadData = async () => {
     if (!window.db) {
       console.error('Database API not available')
+      // No translation for system errors usually needed, or use t() if desired
       alert('Database API (window.db) is missing. Preload script failed to load.')
       return
     }
@@ -215,16 +238,16 @@ function App() {
 
         <div className="controls">
           {!activeJob ? (
-            <button className="btn-start" onClick={startTimer}>Start</button>
+            <button className="btn-start" onClick={startTimer}>{t('common.start')}</button>
           ) : (
-            <button className="btn-stop" onClick={stopTimer}>Stop</button>
+            <button className="btn-stop" onClick={stopTimer}>{t('common.stop')}</button>
           )}
         </div>
 
         <div className="inputs">
           <input
             type="text"
-            placeholder="What are you working on?"
+            placeholder={t('main.placeholder')}
             value={note}
             onChange={(e) => setNote(e.target.value)}
             disabled={!!activeJob}
@@ -237,7 +260,7 @@ function App() {
             disabled={!!activeJob}
             className="select-project"
           >
-            <option value="">No Project</option>
+            <option value="">{t('main.noProject')}</option>
             {projects.map(p => (
               <option key={p.id} value={p.id}>{p.name}</option>
             ))}
@@ -249,7 +272,7 @@ function App() {
                 type="text"
                 value={newProjectName}
                 onChange={(e) => setNewProjectName(e.target.value)}
-                placeholder="Project Name"
+                placeholder={t('projects.newProjectPlaceholder')}
                 className="input-project-name"
                 autoFocus
                 onKeyDown={(e) => {
@@ -261,20 +284,20 @@ function App() {
               <button className="btn-icon btn-cancel" onClick={() => setIsAddingProject(false)}>✕</button>
             </div>
           ) : (
-            <button className="btn-icon" onClick={() => setIsAddingProject(true)} title="Add Project">+</button>
+            <button className="btn-icon" onClick={() => setIsAddingProject(true)} title={t('projects.addProject')}>+</button>
           )}
         </div>
       </div>
 
       <div className="job-list">
-        <h2>Recent Jobs</h2>
+        <h2>{t('main.recentJobs')}</h2>
         <div className="list-content">
           {jobs.slice().reverse().map(job => {
             return (
               <div key={job.id} className="job-item">
                 <div className="job-info">
                   <span className="job-time">{formatTime(job.duration)}</span>
-                  <span className="job-desc">{job.description || 'No description'}</span>
+                  <span className="job-desc">{job.description || t('main.noDescription')}</span>
                 </div>
                 <select
                   className="job-project-select"
@@ -286,7 +309,7 @@ function App() {
                     setJobs(prev => prev.map(j => j.id === job.id ? updatedJob : j))
                   }}
                 >
-                  <option value="">No Project</option>
+                  <option value="">{t('main.noProject')}</option>
                   {projects.map(p => (
                     <option key={p.id} value={p.id}>{p.name}</option>
                   ))}
