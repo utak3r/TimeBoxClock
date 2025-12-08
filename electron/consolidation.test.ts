@@ -1,12 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { consolidateJobs, Job, Project } from './consolidation'
-
-// Mock Project
-const mockProject: Project = {
-    id: 'p1',
-    name: 'Project 1',
-    color: '#ffffff'
-}
+import { consolidateJobs, Job } from './consolidation'
 
 // Helper to create date
 const createDate = (year: number, month: number, day: number, hour: number = 0) => {
@@ -40,7 +33,7 @@ describe('consolidateJobs', () => {
             }
         ]
 
-        const result = consolidateJobs(jobs, [mockProject], now)
+        const result = consolidateJobs(jobs, now)
         expect(result).toHaveLength(2)
         expect(result[0].id).toBe('j1')
         expect(result[1].id).toBe('j2')
@@ -72,7 +65,7 @@ describe('consolidateJobs', () => {
             }
         ]
 
-        const result = consolidateJobs(jobs, [mockProject], now)
+        const result = consolidateJobs(jobs, now)
         expect(result).toHaveLength(1)
 
         const consolidated = result[0]
@@ -108,7 +101,7 @@ describe('consolidateJobs', () => {
             }
         ]
 
-        const result = consolidateJobs(jobs, [mockProject], now)
+        const result = consolidateJobs(jobs, now)
         expect(result).toHaveLength(2)
         expect(result.find(j => j.projectId === 'p1')).toBeDefined()
         expect(result.find(j => j.projectId === 'p2')).toBeDefined()
@@ -129,7 +122,7 @@ describe('consolidateJobs', () => {
             }
         ]
 
-        const result = consolidateJobs(jobs, [mockProject], now)
+        const result = consolidateJobs(jobs, now)
         expect(result).toHaveLength(1)
         expect(result[0].id).toBe('j1') // ID preserved
         expect(result[0].isRunning).toBe(true)
@@ -149,7 +142,7 @@ describe('consolidateJobs', () => {
             { id: 'j5', projectId: 'p1', description: 'J5', startTime: createDate(2023, 0, 4, 10), endTime: createDate(2023, 0, 4, 11), duration: 3600, isRunning: false },
         ]
 
-        const result = consolidateJobs(jobs, [mockProject], now)
+        const result = consolidateJobs(jobs, now)
 
         // Expect 3 entries: 
         // 1 consolidated for Jan 1

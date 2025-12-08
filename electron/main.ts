@@ -241,9 +241,8 @@ app.on('activate', () => {
 function consolidateOldJobs() {
   console.log('Running job consolidation...')
   const jobs = store.get('jobs') || []
-  const projects = store.get('projects') || []
 
-  const newJobList = consolidateJobs(jobs, projects)
+  const newJobList = consolidateJobs(jobs)
 
   // Only update if length changed or if we want to enforce sort order (but let's just check length for simple opt)
   // Actually, wait, consolidateJobs always returns a sorted list. If the store list was not sorted, this might update it.

@@ -16,7 +16,7 @@ export interface Job {
     isRunning: boolean;
 }
 
-export function consolidateJobs(jobs: Job[], projects: Project[], now: Date = new Date()): Job[] {
+export function consolidateJobs(jobs: Job[], now: Date = new Date()): Job[] {
     const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime()
 
     const jobsToKeep: Job[] = []
