@@ -7,24 +7,25 @@ describe('Sidebar', () => {
         const onViewChange = vi.fn()
         render(<Sidebar currentView="main" onViewChange={onViewChange} />)
 
-        expect(screen.getByText('Main')).toBeInTheDocument()
-        expect(screen.getByText('Projects')).toBeInTheDocument()
-        expect(screen.getByText('Stats')).toBeInTheDocument()
+
+        expect(screen.getByText('sidebar.timer')).toBeInTheDocument()
+        expect(screen.getByText('sidebar.projects')).toBeInTheDocument()
+        expect(screen.getByText('sidebar.stats')).toBeInTheDocument()
     })
 
     it('highlights active view', () => {
         const onViewChange = vi.fn()
         render(<Sidebar currentView="projects" onViewChange={onViewChange} />)
 
-        expect(screen.getByText('Projects')).toHaveClass('active')
-        expect(screen.getByText('Main')).not.toHaveClass('active')
+        expect(screen.getByText('sidebar.projects')).toHaveClass('active')
+        expect(screen.getByText('sidebar.timer')).not.toHaveClass('active')
     })
 
     it('calls onViewChange when clicked', () => {
         const onViewChange = vi.fn()
         render(<Sidebar currentView="main" onViewChange={onViewChange} />)
 
-        fireEvent.click(screen.getByText('Projects'))
+        fireEvent.click(screen.getByText('sidebar.projects'))
         expect(onViewChange).toHaveBeenCalledWith('projects')
     })
 })

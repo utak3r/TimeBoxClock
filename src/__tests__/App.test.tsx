@@ -52,13 +52,13 @@ describe('App Integration', () => {
         render(<App />)
 
         // Navigate to Projects view
-        await user.click(screen.getByText('Projects'))
+        await user.click(screen.getByText('sidebar.projects'))
 
         // Add project
         const input = screen.getByTestId('new-project-input')
         await user.type(input, 'New Project')
 
-        await user.click(screen.getByText('Add Project'))
+        await user.click(screen.getByText('projects.addProject'))
 
         await waitFor(() => {
             expect(mockDb.addProject).toHaveBeenCalled()
@@ -74,19 +74,19 @@ describe('App Integration', () => {
         render(<App />)
 
         // Start timer
-        await user.click(screen.getByText('Start'))
+        await user.click(screen.getByText('common.start'))
 
         await waitFor(() => {
             expect(mockDb.addJob).toHaveBeenCalled()
-            expect(screen.getByText('Stop')).toBeInTheDocument()
+            expect(screen.getByText('common.stop')).toBeInTheDocument()
         })
 
         // Stop timer
-        await user.click(screen.getByText('Stop'))
+        await user.click(screen.getByText('common.stop'))
 
         await waitFor(() => {
             expect(mockDb.updateJob).toHaveBeenCalled()
-            expect(screen.getByText('Start')).toBeInTheDocument()
+            expect(screen.getByText('common.start')).toBeInTheDocument()
         })
     })
 })

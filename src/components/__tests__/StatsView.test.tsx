@@ -41,7 +41,7 @@ describe('StatsView', () => {
         expect(screen.getByText('Project A')).toBeInTheDocument()
         expect(screen.getByText('1h 0m 0s')).toBeInTheDocument() // Project A duration
 
-        expect(screen.getByText('No Project')).toBeInTheDocument()
+        expect(screen.getByText('main.noProject')).toBeInTheDocument()
         expect(screen.getByText('0h 30m 0s')).toBeInTheDocument() // No Project duration
     })
 })

@@ -38,9 +38,9 @@ describe('ProjectsView', () => {
             />
         )
 
-        const input = screen.getByPlaceholderText('New Project Name')
+        const input = screen.getByPlaceholderText('projects.newProjectPlaceholder')
         fireEvent.change(input, { target: { value: 'New Project' } })
-        fireEvent.click(screen.getByText('Add Project'))
+        fireEvent.click(screen.getByText('projects.addProject'))
 
         expect(onAddProject).toHaveBeenCalledWith('New Project')
     })
@@ -57,11 +57,11 @@ describe('ProjectsView', () => {
             />
         )
 
-        const removeButtons = screen.getAllByText('Remove')
+        const removeButtons = screen.getAllByText('common.delete')
         fireEvent.click(removeButtons[0])
 
-        expect(screen.getByText('Remove Project')).toBeInTheDocument()
-        expect(screen.getByText('Move to "No Project"')).toBeInTheDocument()
-        expect(screen.getByText('Delete Jobs')).toBeInTheDocument()
+        expect(screen.getAllByText('projects.title')[1]).toBeInTheDocument() // Modal title is same as main title
+        expect(screen.getByText('projects.keepJobs')).toBeInTheDocument()
+        expect(screen.getByText('projects.deleteJobs')).toBeInTheDocument()
     })
 })
