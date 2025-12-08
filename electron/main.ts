@@ -2,26 +2,11 @@ import { app, BrowserWindow, Tray, Menu, nativeImage, ipcMain } from 'electron'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
 import Store from 'electron-store'
+import { consolidateJobs, Job, Project } from './consolidation'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 // Data Store Setup
-interface Project {
-  id: string;
-  name: string;
-  color: string;
-}
-
-interface Job {
-  id: string;
-  projectId: string | null;
-  description: string;
-  startTime: number;
-  endTime: number | null;
-  duration: number; // stored in seconds
-  isRunning: boolean;
-}
-
 interface StoreSchema {
   projects: Project[];
   jobs: Job[];
@@ -33,6 +18,8 @@ const store = new Store<StoreSchema>({
     jobs: []
   }
 })
+
+// ... ipc handlers ...
 
 // Log handler
 ipcMain.on('log', (_, msg) => console.log('Renderer/Preload:', msg))
@@ -193,6 +180,7 @@ if (!gotTheLock) {
   })
 
   app.whenReady().then(() => {
+    consolidateOldJobs()
     createWindow()
     createTray()
   })
@@ -209,3 +197,23 @@ app.on('activate', () => {
     createWindow()
   }
 })
+
+function consolidateOldJobs() {
+  console.log('Running job consolidation...')
+  const jobs = store.get('jobs') || []
+  const projects = store.get('projects') || []
+
+  const newJobList = consolidateJobs(jobs, projects)
+
+  // Only update if length changed or if we want to enforce sort order (but let's just check length for simple opt)
+  // Actually, wait, consolidateJobs always returns a sorted list. If the store list was not sorted, this might update it.
+  // But purely for consolidation, if lengths differ, we definitely update. 
+  // If lengths are same, it means no consolidation happened (assuming no zero-length consolidation which is true).
+
+  if (newJobList.length !== jobs.length) {
+    store.set('jobs', newJobList)
+    console.log(`Consolidated jobs. Old count: ${jobs.length}, New count: ${newJobList.length}`)
+  } else {
+    console.log('No jobs to consolidate.')
+  }
+}
