@@ -28,6 +28,7 @@
         "addProject": "Dodaj Projekt",
         "newProjectPlaceholder": "Nazwa Projektu",
         "deleteConfirmation": "Usunąć projekt i jego zadania?",
+        "deleteConfirmationUnassigned": "Usunąć zadania bez projektu?",
         "deleteJobs": "Usuń zadania",
         "keepJobs": "Zachowaj zadania (Odprzypisz)",
         "clearUnassigned": "Wyczyść nieprzypisane",

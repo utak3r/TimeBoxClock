@@ -28,6 +28,7 @@
         "addProject": "Add Project",
         "newProjectPlaceholder": "Project Name",
         "deleteConfirmation": "Delete project and its jobs?",
+        "deleteConfirmationUnassigned": "Delete unassigned jobs?",
         "deleteJobs": "Delete Jobs",
         "keepJobs": "Keep Jobs (Unassign)",
         "clearUnassigned": "Clear Unassigned Jobs",

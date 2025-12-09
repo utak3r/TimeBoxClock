@@ -164,12 +164,8 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({
                 <div className="modal-overlay">
                     <div className="modal">
                         <h3>{t('projects.clearUnassigned')}</h3>
-                        <p>{t('projects.deleteConfirmation')}</p>
-                        {/* Reusing deleteConfirmation or should genericize. 
-                           "Are you sure you want to delete all jobs that are not assigned to any project?"
-                           I'll use a new key `projects.clearConfirmation` later, or just reuse/adapt.
-                           I'll use a generic confirm for now.
-                        */}
+                        <p>{t('projects.deleteConfirmationUnassigned')}</p>
+                        { }
                         <div className="modal-actions">
                             <button
                                 onClick={() => {
