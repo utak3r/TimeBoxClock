@@ -4,6 +4,8 @@
 
 TimeBoxClock is a simple time-boxing application that helps you to focus on your tasks.
 
+![TimeBoxClock](screenshot_tray.png)
+
 It sits in a tray. When needed, shows a main window. From here you can easily start or stop a timer. Each measurement can be assigned to a project. 
 
 For now it detects user's locale and shows appropriate language. Right now, only English and Polish are supported.
