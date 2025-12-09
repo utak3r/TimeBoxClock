@@ -25,7 +25,13 @@ describe('Sidebar', () => {
         const onViewChange = vi.fn()
         render(<Sidebar currentView="main" onViewChange={onViewChange} />)
 
+        fireEvent.click(screen.getByText('sidebar.timer'))
+        expect(onViewChange).toHaveBeenCalledWith('main')
+
         fireEvent.click(screen.getByText('sidebar.projects'))
         expect(onViewChange).toHaveBeenCalledWith('projects')
+
+        fireEvent.click(screen.getByText('sidebar.stats'))
+        expect(onViewChange).toHaveBeenCalledWith('stats')
     })
 })
